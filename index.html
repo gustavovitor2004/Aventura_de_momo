@@ -330,6 +330,63 @@
                 opacity: 0;
             }
         }
+
+        /* --- CUSTOM ALERT MODAL --- */
+        .alert-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(4px);
+            transition: opacity 0.2s ease;
+        }
+
+        .alert-content {
+            background: #2a1e24;
+            padding: 30px;
+            border-radius: 12px;
+            border: 4px solid #ff4a73;
+            box-shadow: 0 0 30px rgba(255, 74, 115, 0.4);
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            animation: alertShow 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .alert-content h2 {
+            color: #ff4a73;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px #000;
+        }
+
+        .alert-content p {
+            color: #e0d4cc;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        .alert-content button {
+            min-width: 120px;
+        }
+
+        @keyframes alertShow {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 
@@ -387,6 +444,15 @@
         </div>
     </div>
 
+    <!-- Custom Alert Modal -->
+    <div id="custom-alert" class="alert-overlay hidden">
+        <div class="alert-content">
+            <h2 id="alert-title">⚠️ AVISO DA MASMORRA ⚠️</h2>
+            <p id="alert-message"></p>
+            <button class="btn-sim" id="alert-btn">Entendido</button>
+        </div>
+    </div>
+
     <script>
         let etapa = 0;
         let mouseNoLabirinto = false;
@@ -397,6 +463,21 @@
         let spiders = [];
         let mouseX = 0, mouseY = 0;
         let metrosPercorridos = 0;
+        let alertaCallback = null;
+
+        function mostrarAlerta(mensagem, callback = null) {
+            document.getElementById("alert-message").innerText = mensagem;
+            alertaCallback = callback;
+            document.getElementById("custom-alert").classList.remove("hidden");
+            
+            // Set focus on alert button for accessibility / easy closing
+            document.getElementById("alert-btn").onclick = function() {
+                document.getElementById("custom-alert").classList.add("hidden");
+                if (alertaCallback) {
+                    alertaCallback();
+                }
+            };
+        }
 
         const etapas = [
             {
@@ -494,8 +575,7 @@
         }
 
         function clicouNoErrado() {
-            alert(etapas[etapa - 1].erro);
-            resetarJogo();
+            mostrarAlerta(etapas[etapa - 1].erro, resetarJogo);
         }
 
         const mapaLabirinto = [
@@ -538,8 +618,7 @@
                             if (mouseNoLabirinto) {
                                 mouseNoLabirinto = false;
                                 avatar.style.display = "none";
-                                alert("💥 Você bateu nas paredes de espinhos da masmorra! O herói desmaiou. Tente de novo!");
-                                iniciarLabirinto();
+                                mostrarAlerta("💥 Você bateu nas paredes de espinhos da masmorra! O herói desmaiou. Tente de novo!", iniciarLabirinto);
                             }
                         };
                     } else if (cell === 0) {
@@ -565,7 +644,7 @@
                                 cellDiv.style.backgroundColor = "#1a1216";
                                 document.getElementById("celula-fim").classList.add("aberto");
                                 document.getElementById("celula-fim").innerHTML = "FIM<br>🔓";
-                                alert("🔑 VOCÊ ACHOU A CHAVE! O portão dourado da saída se abriu! Corra para o FIM!");
+                                mostrarAlerta("🔑 VOCÊ ACHOU A CHAVE! O portão dourado da saída se abriu! Corra para o FIM!");
                             }
                         };
                     } else if (cell === 3) {
@@ -579,7 +658,7 @@
                                     avatar.style.display = "none";
                                     carregarAlertaAranhas();
                                 } else {
-                                    alert("🔒 O portão está trancado por magia rúnica! Você precisa dar a volta e pegar a chave de ouro primeiro.");
+                                    mostrarAlerta("🔒 O portão está trancado por magia rúnica! Você precisa dar a volta e pegar a chave de ouro primeiro.");
                                 }
                             }
                         };
@@ -603,8 +682,7 @@
                 if (mouseNoLabirinto) {
                     mouseNoLabirinto = false;
                     avatar.style.display = "none";
-                    alert("Você fugiu dos limites do labirinto! O herói se perdeu na névoa.");
-                    iniciarLabirinto();
+                    mostrarAlerta("Você fugiu dos limites do labirinto! O herói se perdeu na névoa.", iniciarLabirinto);
                 }
             };
         }
@@ -699,16 +777,14 @@
             jogoAranhaAtivo = false;
             clearInterval(spiderInterval);
             clearInterval(metrosInterval);
-            alert("🏃‍♀️💨 Ufa! Você conseguiu despistar a horda de aranhas mutantes a tempo!");
-            salaDoPergaminho();
+            mostrarAlerta("🏃‍♀️💨 Ufa! Você conseguiu despistar a horda de aranhas mutantes a tempo!", salaDoPergaminho);
         }
 
         function morreuAranha() {
             jogoAranhaAtivo = false;
             clearInterval(spiderInterval);
             clearInterval(metrosInterval);
-            alert("NAOOOOOOOO MOMO! 🕷️ Uma das aranhas te pegou no meio do caminho!");
-            resetarJogo();
+            mostrarAlerta("NAOOOOOOOO MOMO! 🕷️ Uma das aranhas te pegou no meio do caminho!", resetarJogo);
         }
 
         function limparAranhas() {

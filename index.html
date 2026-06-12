@@ -656,9 +656,21 @@
                                 cellDiv.style.backgroundColor = "#1a1216";
                                 document.getElementById("celula-fim").classList.add("aberto");
                                 document.getElementById("celula-fim").innerHTML = "FIM<br>🔓";
+                                
+                                // Pausar o controle e fixar o avatar no centro da célula da chave
                                 mouseNoLabirinto = false;
-                                avatar.style.display = "none";
+                                const rectWrapper = mazeWrapper.getBoundingClientRect();
+                                const rectKey = cellDiv.getBoundingClientRect();
+                                const x = (rectKey.left - rectWrapper.left) + (rectKey.width / 2);
+                                const y = (rectKey.top - rectWrapper.top) + (rectKey.height / 2);
+                                avatar.style.left = x + "px";
+                                avatar.style.top = y + "px";
+                                avatar.style.display = "block";
+                                
                                 mostrarAlerta("🔑 VOCÊ ACHOU A CHAVE! O portão dourado da saída se abriu! Corra para o FIM!");
+                            } else if (!mouseNoLabirinto && temChave) {
+                                // Retoma o controle ao passar o mouse sobre a célula da chave novamente
+                                mouseNoLabirinto = true;
                             }
                         };
                     } else if (cell === 3) {
@@ -672,10 +684,21 @@
                                     avatar.style.display = "none";
                                     carregarAlertaAranhas();
                                 } else {
+                                    // Pausar o controle e fixar o avatar no centro da célula FIM
                                     mouseNoLabirinto = false;
-                                    avatar.style.display = "none";
+                                    const rectWrapper = mazeWrapper.getBoundingClientRect();
+                                    const rectFim = cellDiv.getBoundingClientRect();
+                                    const x = (rectFim.left - rectWrapper.left) + (rectFim.width / 2);
+                                    const y = (rectFim.top - rectWrapper.top) + (rectFim.height / 2);
+                                    avatar.style.left = x + "px";
+                                    avatar.style.top = y + "px";
+                                    avatar.style.display = "block";
+                                    
                                     mostrarAlerta("🔒 O portão está trancado por magia rúnica! Você precisa dar a volta e pegar a chave de ouro primeiro.");
                                 }
+                            } else if (!mouseNoLabirinto && !temChave) {
+                                // Retoma o controle ao passar o mouse sobre a célula FIM novamente
+                                mouseNoLabirinto = true;
                             }
                         };
                     }

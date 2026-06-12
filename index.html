@@ -644,6 +644,8 @@
                                 cellDiv.style.backgroundColor = "#1a1216";
                                 document.getElementById("celula-fim").classList.add("aberto");
                                 document.getElementById("celula-fim").innerHTML = "FIM<br>🔓";
+                                mouseNoLabirinto = false;
+                                avatar.style.display = "none";
                                 mostrarAlerta("🔑 VOCÊ ACHOU A CHAVE! O portão dourado da saída se abriu! Corra para o FIM!");
                             }
                         };
@@ -658,6 +660,8 @@
                                     avatar.style.display = "none";
                                     carregarAlertaAranhas();
                                 } else {
+                                    mouseNoLabirinto = false;
+                                    avatar.style.display = "none";
                                     mostrarAlerta("🔒 O portão está trancado por magia rúnica! Você precisa dar a volta e pegar a chave de ouro primeiro.");
                                 }
                             }

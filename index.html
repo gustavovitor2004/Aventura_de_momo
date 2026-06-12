@@ -636,6 +636,7 @@
                         cellDiv.classList.add("path");
                     } else if (cell === 2) {
                         cellDiv.classList.add("start-cell");
+                        cellDiv.id = "celula-inicio";
                         cellDiv.innerText = "INÍCIO";
 
                         cellDiv.onmouseenter = () => {
@@ -700,6 +701,22 @@
                     mostrarAlerta("Você fugiu dos limites do labirinto! O herói se perdeu na névoa.", iniciarLabirinto);
                 }
             };
+
+            // Posicionar o avatar automaticamente no centro do bloco verde de 'INÍCIO'
+            const celulaInicio = document.getElementById("celula-inicio");
+            if (celulaInicio) {
+                setTimeout(() => {
+                    const rectWrapper = mazeWrapper.getBoundingClientRect();
+                    const rectInicio = celulaInicio.getBoundingClientRect();
+                    
+                    const x = (rectInicio.left - rectWrapper.left) + (rectInicio.width / 2);
+                    const y = (rectInicio.top - rectWrapper.top) + (rectInicio.height / 2);
+                    
+                    avatar.style.left = x + "px";
+                    avatar.style.top = y + "px";
+                    avatar.style.display = "block";
+                }, 50);
+            }
         }
 
         function carregarAlertaAranhas() {

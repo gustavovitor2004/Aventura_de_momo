@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Masmorra do Amor Lendário ⚔️🛡️</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', Courier, monospace, sans-serif;
+        }
+
+        body {
+            background-color: #1a1216;
+            color: #e0d4cc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .container {
+            background: #2a1e24;
+            padding: 30px;
+            border-radius: 12px;
+            border: 4px solid #8c263e;
+            box-shadow: 0 0 25px rgba(140, 38, 62, 0.5);
+            text-align: center;
+            max-width: 800px;
+            width: 95%;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            color: #ff4a73;
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            line-height: 1.4;
+            text-transform: uppercase;
+            text-shadow: 2px 2px #000;
+        }
+
+        p.narracao {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            color: #d1bfa7;
+            line-height: 1.6;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            min-height: 80px;
+            position: relative;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            font-family: inherit;
+            border: 2px solid #000;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 3px 3px 0px #000;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px #000;
+        }
+
+        .btn-sim {
+            background-color: #a62440;
+            color: white;
+        }
+
+        .btn-sim:hover {
+            background-color: #c42b4e;
+        }
+
+        .btn-nao {
+            background-color: #4a3b43;
+            color: #bfaea7;
+        }
+
+        /* --- LABIRINTO --- */
+        #maze-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-top: 15px;
+        }
+
+        #maze-container {
+            display: block;
+            background: #110d10;
+            padding: 10px;
+            border: 3px solid #ff4a73;
+            cursor: none;
+        }
+
+        .maze-row {
+            display: flex;
+        }
+
+        .cell {
+            width: 38px;
+            height: 38px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            user-select: none;
+        }
+
+        .wall {
+            background-color: #4a1525;
+            border: 1px solid #2d0b16;
+        }
+
+        .path {
+            background-color: #1a1216;
+        }
+
+        .start-cell {
+            background-color: #3b7a57;
+            color: white;
+            font-size: 0.6rem;
+        }
+
+        .key-cell {
+            background-color: #1a1216;
+            color: #fab005;
+            font-size: 1.2rem;
+        }
+
+        .end-cell {
+            background-color: #bd9a22;
+            color: black;
+            font-size: 0.55rem;
+            border: 2px dashed #000;
+            line-height: 1.1;
+            transition: background 0.3s;
+        }
+
+        .end-cell.aberto {
+            background-color: #d4af37;
+            border: 2px solid #000;
+            box-shadow: 0 0 10px #d4af37;
+        }
+
+        /* Cursor do Jogador */
+        #player-avatar {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background-color: #ff4a73;
+            border: 2px solid white;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #ff4a73;
+            pointer-events: none;
+            z-index: 100;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+
+        /* --- ÁREA DE FUGA DAS ARANHAS --- */
+        #combat-area {
+            width: 100%;
+            height: 350px;
+            background: #0d090b;
+            border: 3px dashed #ff4a73;
+            position: relative;
+            overflow: hidden;
+            margin-top: 15px;
+            cursor: none;
+        }
+
+        #fuga-avatar {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background-color: #ff4a73;
+            border: 2px solid white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ff4a73;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 99;
+        }
+
+        .spider {
+            position: absolute;
+            font-size: 32px;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        #contador-fuga {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(140, 38, 62, 0.85);
+            border: 2px solid #ff4a73;
+            padding: 6px 15px;
+            border-radius: 6px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 1px 1px #000;
+            z-index: 101;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* --- TELA FINAL OTIMIZADA --- */
+        .hidden {
+            display: none !important;
+        }
+
+        .tela-final {
+            max-width: 750px;
+        }
+
+        .img-principal {
+            width: 100%;
+            max-height: 350px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 4px solid #8c263e;
+            margin-bottom: 25px;
+        }
+
+        .casal-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .avatar-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid;
+            margin-bottom: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .avatar-vayne {
+            border-color: #5a3d66;
+        }
+
+        .avatar-soraka {
+            border-color: #d4af37;
+        }
+
+        .avatar-box span {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .vayne-label {
+            color: #b8a2c4;
+        }
+
+        .soraka-label {
+            color: #d4af37;
+        }
+
+        /* Correção cirúrgica na organização do texto romântico */
+        .texto-romantico {
+            text-align: left;
+            /* Garante que o texto flua de forma natural sem forçar espaçamentos bizarros */
+            line-height: 1.6;
+            font-size: 1.05rem;
+            color: #e0d4cc;
+            background: #1f161b;
+            padding: 25px;
+            border-radius: 8px;
+            border: 2px solid #8c263e;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .texto-romantico p {
+            margin-bottom: 18px;
+            text-indent: 0;
+        }
+
+        .texto-romantico p:last-child {
+            margin-bottom: 0;
+        }
+
+        .heart {
+            position: absolute;
+            color: #ff4a73;
+            font-size: 20px;
+            opacity: 0.7;
+            animation: float 4s linear infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-10vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container" id="game-box">
+        <h1 id="titulo-tela">Masmorra do Amor Eterno</h1>
+        <p class="narracao" id="narracao-texto">Você está diante dos portões de ferro da masmorra mais perigosa do
+            reino. Rumores dizem que em seu nível mais profundo reside o Pergaminho Sagrado do Amor Supremo... Você está
+            pronta para começar essa exploração?</p>
+
+        <div class="btn-container" id="btn-container">
+            <button class="btn-sim" id="btn-sim" onclick="proximoPasso()">Sim, avançar!</button>
+            <button class="btn-nao" id="btn-nao" onmouseover="furgirBotao()" onclick="furgirBotao()">Não, voltar para a
+                taverna</button>
+        </div>
+
+        <div id="maze-wrapper" class="hidden">
+            <div id="maze-container"></div>
+            <div id="player-avatar"></div>
+        </div>
+
+        <div id="combat-area" class="hidden"></div>
+    </div>
+
+    <div class="container tela-final hidden" id="tela-final">
+        <h1>📜 O PERGAMINHO LENDÁRIO FOI ABERTO! 📜</h1>
+
+        <img src="maos dadas.png" alt="Mãos Dadas" class="img-principal">
+
+        <div class="casal-container">
+            <div class="avatar-box">
+                <img src="vayne.png" alt="Momozinha" class="avatar avatar-vayne">
+                <span class="vayne-label">Momozinha</span>
+            </div>
+            <div class="avatar-box">
+                <img src="soraka.png" alt="Momozao" class="avatar avatar-soraka">
+                <span class="soraka-label">Momozao</span>
+            </div>
+        </div>
+
+        <div class="texto-romantico">
+            <p><strong>Meu amor,</strong></p>
+
+            <p>Hoje é o nosso dia, e eu não poderia deixar de criar algo único para te lembrar o quanto você é especial
+                para mim. Assim como esse jogo cheio de pegadinhas e masmorras, a nossa vida juntos é cheia de sorrisos,
+                piadas internas e uma cumplicidade sem tamanho. Você é a minha Vayne braba favorita, e eu sempre serei a
+                sua Soraka pronta para te dar todo o suporte, carinho e cura que você precisar neste mundo.</p>
+
+            <p>Obrigado por ser minha companheira, minha melhor amiga e o amor da minha vida. Cada momento ao seu lado é
+                um privilégio. Que a gente continue buildando a nossa história juntos, superando qualquer desafio e
+                farmando muitas memórias lindas lado a lado.</p>
+
+            <p><strong>Eu te amo daqui até o infinito! Feliz Dia dos Namorados! 💕</strong></p>
+        </div>
+    </div>
+
+    <script>
+        let etapa = 0;
+        let mouseNoLabirinto = false;
+        let temChave = false;
+        let jogoAranhaAtivo = false;
+        let spiderInterval;
+        let metrosInterval;
+        let spiders = [];
+        let mouseX = 0, mouseY = 0;
+        let metrosPercorridos = 0;
+
+        const etapas = [
+            {
+                pergunta: "⚠️ ALERTA DE PERIGO! ⚠️",
+                narracao: "Um sopro de vento congelante apaga suas tochas. Criaturas rastejam nas sombras à frente. Tem certeza absoluta que quer continuar nesta escuridão?",
+                sim: "Acender tocha e avançar!",
+                erro: "Escolheu errado, momo! Uma armadilha de fumaça te jogou de volta à entrada. 😜"
+            },
+            {
+                pergunta: "⚔️ O GUARDIÃO DE PEDRA ⚔️",
+                narracao: "Uma estátua gigante de gárgula ganha vida bloqueando o corredor! Ela exige um sacrifício de coragem. Certeza messssmo de que não quer recuar?",
+                sim: "Desgastar o guardião com determinação!",
+                erro: "Ih, titubeou? O guardião te deu um susto tão grande que você correu até a entrada! 🤭"
+            },
+            {
+                pergunta: "🧪 A SALA DOS POÇOS DE ÁCIDO 🧪",
+                narracao: "O chão ruiu e agora existem apenas pequenas plataformas sobre um rio de ácido fervente. Caminho sem volta! Quer desistir e dar meia volta?",
+                sim: "Saltar entre as plataformas sem medo!",
+                erro: "Desistir? No Dia dos Namorados? O chão quebrou e você caiu no portal de teletransporte do início! 💖"
+            },
+            {
+                pergunta: "🔮 A ILUSÃO SANGRENTA 🔮",
+                narracao: "Uma névoa purpura faz você ver miragens bizarras. Uma voz ecoa: 'Última chance de fugir... Vai mesmo encarar o que vem a seguir?'",
+                sim: "Romper a névoa com o poder do amor!",
+                erro: "Tarde demais para fugir, mas você tentou... A névoa te jogou no começo do calabouço! 🏃‍♀️"
+            },
+            {
+                pergunta: "🗝️ A PORTA DO LABIRINTO DE SANGUE 🗝️",
+                narracao: "A porta da câmara secreta está selada por um quebra-cabeça místico perigosíssimo. Pronta para colocar as mãos e decifrá-lo?",
+                sim: "INICIAR O ENIGMA DO LABIRINTO! 🧩",
+                erro: "Nossa, hesitou logo nos portões do enigma? Só de birra, o mecanismo te empurrou pro início! 😂"
+            }
+        ];
+
+        function resetarJogo() {
+            etapa = 0;
+            mouseNoLabirinto = false;
+            temChave = false;
+            limparAranhas();
+            document.getElementById("titulo-tela").innerText = "Masmorra do Amor Eterno";
+            document.getElementById("narracao-texto").innerText = "Você está diante dos portões de ferro da masmorra mais perigosa do reino. Rumores dizem que em seu nível mais profundo reside o Pergaminho Sagrado do Amor Supremo... Você está pronta para começar essa exploração?";
+            document.getElementById("narracao-texto").classList.remove("hidden");
+            document.getElementById("btn-container").classList.remove("hidden");
+
+            const btnSim = document.getElementById("btn-sim");
+            const btnNao = document.getElementById("btn-nao");
+            btnSim.innerText = "Sim, avançar!";
+            btnNao.innerText = "Não, voltar para a taverna";
+
+            btnNao.style.position = "relative";
+            btnNao.style.left = "0";
+            btnNao.style.top = "0";
+            btnNao.removeAttribute("onmouseover");
+            btnNao.setAttribute("onmouseover", "furgirBotao()");
+            btnNao.removeAttribute("onclick");
+            btnNao.setAttribute("onclick", "furgirBotao()");
+
+            document.getElementById("maze-wrapper").classList.add("hidden");
+            document.getElementById("player-avatar").style.display = "none";
+            document.getElementById("combat-area").classList.add("hidden");
+        }
+
+        function furgirBotao() {
+            if (etapa === 0) {
+                const btnNao = document.getElementById("btn-nao");
+                const x = Math.random() * (window.innerWidth - btnNao.offsetWidth - 40);
+                const y = Math.random() * (window.innerHeight - btnNao.offsetHeight - 40);
+                btnNao.style.position = "fixed";
+                btnNao.style.left = x + "px";
+                btnNao.style.top = y + "px";
+            }
+        }
+
+        function proximoPasso() {
+            if (etapa === 0) {
+                const btnNao = document.getElementById("btn-nao");
+                btnNao.style.position = "relative";
+                btnNao.style.left = "0";
+                btnNao.style.top = "0";
+                btnNao.removeAttribute("onmouseover");
+                btnNao.removeAttribute("onclick");
+                btnNao.setAttribute("onclick", "clicouNoErrado()");
+            }
+
+            if (etapa < etapas.length) {
+                const dados = etapas[etapa];
+                document.getElementById("titulo-tela").innerText = dados.pergunta;
+                document.getElementById("narracao-texto").innerText = dados.narracao;
+                document.getElementById("btn-sim").innerText = dados.sim;
+                document.getElementById("btn-nao").innerText = "Fugir";
+                etapa++;
+            } else {
+                iniciarLabirinto();
+            }
+        }
+
+        function clicouNoErrado() {
+            alert(etapas[etapa - 1].erro);
+            resetarJogo();
+        }
+
+        const mapaLabirinto = [
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 4, 1],
+            [1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1],
+            [1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1],
+            [1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1],
+            [1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1],
+            [1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1],
+            [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        ];
+
+        function iniciarLabirinto() {
+            temChave = false;
+            mouseNoLabirinto = false;
+            document.getElementById("btn-container").classList.add("hidden");
+            document.getElementById("titulo-tela").innerText = "🧩 O LABIRINTO DA CHAVE MÍSTICA";
+            document.getElementById("narracao-texto").innerText = "O portão do FIM está trancado! Encontre a CHAVE (🔑) dourada na masmorra e leve-a até a saída. Toque no bloco verde de INÍCIO para controlar seu herói. Cuidado com as paredes!";
+
+            const mazeWrapper = document.getElementById("maze-wrapper");
+            const mazeCont = document.getElementById("maze-container");
+            const avatar = document.getElementById("player-avatar");
+
+            mazeCont.innerHTML = "";
+            mazeWrapper.classList.remove("hidden");
+            avatar.style.display = "none";
+
+            mapaLabirinto.forEach((row, rIdx) => {
+                const rowDiv = document.createElement("div");
+                rowDiv.classList.add("maze-row");
+                row.forEach((cell, cIdx) => {
+                    const cellDiv = document.createElement("div");
+                    cellDiv.classList.add("cell");
+
+                    if (cell === 1) {
+                        cellDiv.classList.add("wall");
+                        cellDiv.onmouseenter = () => {
+                            if (mouseNoLabirinto) {
+                                mouseNoLabirinto = false;
+                                avatar.style.display = "none";
+                                alert("💥 Você bateu nas paredes de espinhos da masmorra! O herói desmaiou. Tente de novo!");
+                                iniciarLabirinto();
+                            }
+                        };
+                    } else if (cell === 0) {
+                        cellDiv.classList.add("path");
+                    } else if (cell === 2) {
+                        cellDiv.classList.add("start-cell");
+                        cellDiv.innerText = "INÍCIO";
+
+                        cellDiv.onmouseenter = () => {
+                            if (!mouseNoLabirinto) {
+                                mouseNoLabirinto = true;
+                                avatar.style.display = "block";
+                            }
+                        };
+                    } else if (cell === 4) {
+                        cellDiv.classList.add("key-cell");
+                        cellDiv.id = "celula-chave";
+                        cellDiv.innerText = "🔑";
+                        cellDiv.onmouseenter = () => {
+                            if (mouseNoLabirinto && !temChave) {
+                                temChave = true;
+                                cellDiv.innerText = "";
+                                cellDiv.style.backgroundColor = "#1a1216";
+                                document.getElementById("celula-fim").classList.add("aberto");
+                                document.getElementById("celula-fim").innerHTML = "FIM<br>🔓";
+                                alert("🔑 VOCÊ ACHOU A CHAVE! O portão dourado da saída se abriu! Corra para o FIM!");
+                            }
+                        };
+                    } else if (cell === 3) {
+                        cellDiv.classList.add("end-cell");
+                        cellDiv.id = "celula-fim";
+                        cellDiv.innerHTML = "FIM<br>🔒";
+                        cellDiv.onmouseenter = () => {
+                            if (mouseNoLabirinto) {
+                                if (temChave) {
+                                    mouseNoLabirinto = false;
+                                    avatar.style.display = "none";
+                                    carregarAlertaAranhas();
+                                } else {
+                                    alert("🔒 O portão está trancado por magia rúnica! Você precisa dar a volta e pegar a chave de ouro primeiro.");
+                                }
+                            }
+                        };
+                    }
+                    rowDiv.appendChild(cellDiv);
+                });
+                mazeCont.appendChild(rowDiv);
+            });
+
+            mazeCont.onmousemove = (e) => {
+                if (mouseNoLabirinto) {
+                    const rect = mazeCont.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    avatar.style.left = x + "px";
+                    avatar.style.top = y + "px";
+                }
+            };
+
+            mazeCont.onmouseleave = () => {
+                if (mouseNoLabirinto) {
+                    mouseNoLabirinto = false;
+                    avatar.style.display = "none";
+                    alert("Você fugiu dos limites do labirinto! O herói se perdeu na névoa.");
+                    iniciarLabirinto();
+                }
+            };
+        }
+
+        function carregarAlertaAranhas() {
+            document.getElementById("maze-wrapper").classList.add("hidden");
+            document.getElementById("titulo-tela").innerText = "🕷️ CORRA! AS ARANHAS ESTÃO ATRÁS DE VOCÊ! 🕷️";
+            document.getElementById("narracao-texto").innerHTML = "ELAS SENTIRAM O CHEIRO DA CHAVE E ESTÃO FURIOSAS! Desvie com o cursor de todas as aranhas rastejantes até alcançar os 1000 metros!<br><br><button class='btn-sim' onclick='iniciarFugaAranhas()'>CORRER DESESPERADAMENTE!</button>";
+        }
+
+        function iniciarFugaAranhas() {
+            document.getElementById("narracao-texto").classList.add("hidden");
+            const combatArea = document.getElementById("combat-area");
+            combatArea.classList.remove("hidden");
+            combatArea.innerHTML = '<div id="contador-fuga">Distância: 0m / 1000m</div><div id="fuga-avatar"></div>';
+
+            const avatarFuga = document.getElementById("fuga-avatar");
+            const contadorFuga = document.getElementById("contador-fuga");
+
+            jogoAranhaAtivo = true;
+            spiders = [];
+            metrosPercorridos = 0;
+
+            combatArea.onmousemove = (e) => {
+                if (!jogoAranhaAtivo) return;
+                const rect = combatArea.getBoundingClientRect();
+                mouseX = e.clientX - rect.left;
+                mouseY = e.clientY - rect.top;
+
+                avatarFuga.style.left = mouseX + "px";
+                avatarFuga.style.top = mouseY + "px";
+            };
+
+            metrosInterval = setInterval(() => {
+                if (!jogoAranhaAtivo) return;
+                metrosPercorridos += 10;
+                contadorFuga.innerText = `Distância: ${metrosPercorridos}m / 1000m`;
+
+                if (metrosPercorridos >= 1000) {
+                    completouFuga();
+                }
+            }, 90);
+
+            spiderInterval = setInterval(() => {
+                if (!jogoAranhaAtivo) return;
+
+                const spider = document.createElement("div");
+                spider.classList.add("spider");
+                spider.innerHTML = "🕷️";
+                spider.style.left = Math.random() * (combatArea.offsetWidth - 40) + "px";
+                spider.style.top = "-40px";
+                combatArea.appendChild(spider);
+
+                const spiderObj = {
+                    element: spider,
+                    x: parseFloat(spider.style.left),
+                    y: -40,
+                    speed: Math.random() * 2 + 2.5
+                };
+                spiders.push(spiderObj);
+            }, 350);
+
+            function moverAranhas() {
+                if (!jogoAranhaAtivo) return;
+
+                spiders.forEach((spider, index) => {
+                    spider.y += spider.speed;
+                    spider.element.style.top = spider.y + "px";
+
+                    if (spider.x < mouseX) spider.x += 0.8;
+                    else spider.x -= 0.8;
+                    spider.element.style.left = spider.x + "px";
+
+                    const dist = Math.hypot(spider.x + 16 - mouseX, spider.y + 16 - mouseY);
+                    if (dist < 24) {
+                        morreuAranha();
+                    }
+
+                    if (spider.y > combatArea.offsetHeight) {
+                        spider.element.remove();
+                        spiders.splice(index, 1);
+                    }
+                });
+
+                requestAnimationFrame(moverAranhas);
+            }
+
+            requestAnimationFrame(moverAranhas);
+        }
+
+        function completouFuga() {
+            jogoAranhaAtivo = false;
+            clearInterval(spiderInterval);
+            clearInterval(metrosInterval);
+            alert("🏃‍♀️💨 Ufa! Você conseguiu despistar a horda de aranhas mutantes a tempo!");
+            salaDoPergaminho();
+        }
+
+        function morreuAranha() {
+            jogoAranhaAtivo = false;
+            clearInterval(spiderInterval);
+            clearInterval(metrosInterval);
+            alert("NAOOOOOOOO MOMO! 🕷️ Uma das aranhas te pegou no meio do caminho!");
+            resetarJogo();
+        }
+
+        function limparAranhas() {
+            jogoAranhaAtivo = false;
+            clearInterval(spiderInterval);
+            clearInterval(metrosInterval);
+            spiders = [];
+        }
+
+        function salaDoPergaminho() {
+            document.getElementById("combat-area").classList.add("hidden");
+            document.getElementById("titulo-tela").innerText = "✨ A SALA DO PERGAMINHO LENDÁRIO ✨";
+            document.getElementById("narracao-texto").innerHTML = "Incrível! Você derrotou todas as criaturas e decifrou os enigmas antigos. Diante de você está um altar de ouro com o pergaminho brilhando. Chegou a hora...<br><br><button class='btn-sim' style='background-color:#d4af37; color:#000;' onclick='abrirPergaminho()'>📜 ABRIR PERGAMINHO SAGRADO 📜</button>";
+            document.getElementById("narracao-texto").classList.remove("hidden");
+        }
+
+        function abrirPergaminho() {
+            document.getElementById("game-box").classList.add("hidden");
+            document.getElementById("tela-final").classList.remove("hidden");
+            iniciarCoracoes();
+        }
+
+        function iniciarCoracoes() {
+            setInterval(() => {
+                const heart = document.createElement("div");
+                heart.classList.add("heart");
+                heart.innerHTML = "❤️";
+                heart.style.left = Math.random() * 100 + "vw";
+                heart.style.animationDuration = (Math.random() * 3 + 2) + "s";
+                heart.style.fontSize = (Math.random() * 15 + 15) + "px";
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 4000);
+            }, 300);
+        }
+    </script>
+</body>
+
+</html>

@@ -382,6 +382,7 @@
                 transform: scale(0.8);
                 opacity: 0;
             }
+
             to {
                 transform: scale(1);
                 opacity: 1;
@@ -429,18 +430,32 @@
         </div>
 
         <div class="texto-romantico">
-            <p><strong>Meu amor,</strong></p>
+            <p><strong>Minha eterna Momozinha, a invencível Super Maimai,</strong></p>
 
-            <p>Hoje é o nosso dia, e eu não poderia deixar de criar algo único para te lembrar o quanto você é especial
-                para mim. Assim como esse jogo cheio de pegadinhas e masmorras, a nossa vida juntos é cheia de sorrisos,
-                piadas internas e uma cumplicidade sem tamanho. Você é a minha Vayne braba favorita, e eu sempre serei a
-                sua Soraka pronta para te dar todo o suporte, carinho e cura que você precisar neste mundo.</p>
+            <p>SSe você está lendo isso, significa que superou todas as pegadinhas, decifrou o labirinto místico e
+                correu daquela horda de aranhas... Mas, acima de tudo, significa que você abriu o pergaminho mais
+                valioso que eu guardo: o meu coração por inteiro. Eu não poderia deixar este Dia dos Namorados passar
+                sem criar algo único, feito linha por linha, para tentar expressar o quanto você é essencial na minha
+                vida.</p>
 
-            <p>Obrigado por ser minha companheira, minha melhor amiga e o amor da minha vida. Cada momento ao seu lado é
-                um privilégio. Que a gente continue buildando a nossa história juntos, superando qualquer desafio e
-                farmando muitas memórias lindas lado a lado.</p>
+            <p>É verdade que o nosso caminho até aqui nem sempre foi uma linha reta e pacífica na masmorra. Tivemos as
+                nossas discussões, os momentos em que o céu parecia fechar e os desentendimentos tentaram nos testar.
+                Mas sabe o que isso provou? Que as lendas são reais: nós somos inabaláveis juntos. Cada tempestade que
+                superamos só serviu para limpar o caminho e mostrar que a nossa união não é frágil; é uma fortaleza.</p>
 
-            <p><strong>Eu te amo daqui até o infinito! Feliz Dia dos Namorados! 💕</strong></p>
+            <p>Nessa nossa grande jornada, você é a corajosa, destemida e poderosa Super Maimai, a minha Vayne braba
+                perfeita, cheia de marra, que lidera o ataque e bate pesado. E eu sempre serei o seu Super Gugu, o seu
+                suporte incondicional e protetor de sempre, a sua Soraka pronta para invocar os astros, te curar das
+                feridas do mundo e garantir que nada te pare.</p>
+
+            <p>Obrigado por ser minha companheira, minha melhor amiga, minha conselheira, minha namorada, minha futura
+                esposa e o grande amor da minha vida. Cada segundo ao seu lado, mesmo divididos por uma tela, é um
+                privilégio absoluto. Que a
+                gente continue buildando a nossa história com os melhores itens, superando qualquer boss que o destino
+                coloque na nossa frente e farmando as memórias mais lindas e eternas, lado a lado,
+                até o dia que ficarmos beeeem velhinhos juntinhos, de maos dadas e cheios de amor.</p>
+
+            <p><strong>Momo ama momo DEMAIS!! Feliz Dia dos Namorados! 💕</strong></p>
         </div>
     </div>
 
@@ -469,9 +484,9 @@
             document.getElementById("alert-message").innerText = mensagem;
             alertaCallback = callback;
             document.getElementById("custom-alert").classList.remove("hidden");
-            
+
             // Set focus on alert button for accessibility / easy closing
-            document.getElementById("alert-btn").onclick = function() {
+            document.getElementById("alert-btn").onclick = function () {
                 document.getElementById("custom-alert").classList.add("hidden");
                 if (alertaCallback) {
                     alertaCallback();
@@ -480,7 +495,7 @@
         }
 
         // Permite clicar Enter para fechar o alerta
-        window.addEventListener('keydown', function(event) {
+        window.addEventListener('keydown', function (event) {
             if (event.key === 'Enter') {
                 const alertModal = document.getElementById("custom-alert");
                 if (alertModal && !alertModal.classList.contains("hidden")) {
@@ -656,7 +671,7 @@
                                 cellDiv.style.backgroundColor = "#1a1216";
                                 document.getElementById("celula-fim").classList.add("aberto");
                                 document.getElementById("celula-fim").innerHTML = "FIM<br>🔓";
-                                
+
                                 // Pausar o controle e fixar o avatar no centro da célula da chave
                                 mouseNoLabirinto = false;
                                 const rectWrapper = mazeWrapper.getBoundingClientRect();
@@ -666,7 +681,7 @@
                                 avatar.style.left = x + "px";
                                 avatar.style.top = y + "px";
                                 avatar.style.display = "block";
-                                
+
                                 mostrarAlerta("🔑 VOCÊ ACHOU A CHAVE! O portão dourado da saída se abriu! Corra para o FIM!");
                             } else if (!mouseNoLabirinto && temChave) {
                                 // Retoma o controle ao passar o mouse sobre a célula da chave novamente
@@ -693,7 +708,7 @@
                                     avatar.style.left = x + "px";
                                     avatar.style.top = y + "px";
                                     avatar.style.display = "block";
-                                    
+
                                     mostrarAlerta("🔒 O portão está trancado por magia rúnica! Você precisa dar a volta e pegar a chave de ouro primeiro.");
                                 }
                             } else if (!mouseNoLabirinto && !temChave) {
@@ -731,10 +746,10 @@
                 setTimeout(() => {
                     const rectWrapper = mazeWrapper.getBoundingClientRect();
                     const rectInicio = celulaInicio.getBoundingClientRect();
-                    
+
                     const x = (rectInicio.left - rectWrapper.left) + (rectInicio.width / 2);
                     const y = (rectInicio.top - rectWrapper.top) + (rectInicio.height / 2);
-                    
+
                     avatar.style.left = x + "px";
                     avatar.style.top = y + "px";
                     avatar.style.display = "block";
